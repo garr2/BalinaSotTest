@@ -1,0 +1,22 @@
+<resources>
+
+    <style name="nameOfField" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/helvetica_neue_cyr_roman</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="hintOfField" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/helvetica_neue_cyr_medium</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+    </style>
+    
+    <style name="registryButtonStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/helvetica_neue_cyr_medium</item>
+        <item name="android:background">@drawable/button</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+</resources>

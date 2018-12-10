@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">BalinaSoft Android Test</string>
+    <string name="enter_email">Введите email</string>
+    <string name="registration">Регистрация</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+
+    <array name="email_list">
+        <item>gmail.com</item>
+        <item>gmail.co.uk</item>
+        <item>yandex.ru</item>
+        <item>yandex.by</item>
+        <item>mail.com</item>
+        <item>mail.ru</item>
+        <item>yahoo.com</item>
+        <item>outlook.com</item>
+        <item>tut.by</item>
+        <item>flickr.com</item>
+        <item>github.com</item>
+        <item>icloud.com</item>
+    </array>
+</resources>
