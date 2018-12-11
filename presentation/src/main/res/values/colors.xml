@@ -2,6 +2,6 @@
 <resources>
     <color name="turquoise">#0ac4ba</color>
     <color name="greenblue">#2bda8e</color>
-    <color name="light_teal">#aad2ed</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 </resources>

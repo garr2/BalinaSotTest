@@ -1,20 +1,15 @@
 package com.garr.pavelbobrovko.balinasoftandroidtest.presentation.screen.singup
 
-import android.animation.Animator
 import android.animation.ValueAnimator
 import android.arch.lifecycle.ViewModelProviders
-import android.graphics.Rect
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.view.animation.AnimationUtils
+import android.widget.ArrayAdapter
 import com.garr.pavelbobrovko.balinasoftandroidtest.R
 import com.garr.pavelbobrovko.balinasoftandroidtest.databinding.ActivitySignupBinding
 import com.garr.pavelbobrovko.balinasoftandroidtest.presentation.base.BaseMvvmActivity
 import com.garr.pavelbobrovko.balinasoftandroidtest.presentation.utils.AutoCompleteEmailValidator
+import com.garr.pavelbobrovko.balinasoftandroidtest.presentation.utils.OpenKeyboardListener
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.rxkotlin.subscribeBy
 
@@ -22,6 +17,12 @@ class SignupActivity : BaseMvvmActivity<SignupViewModel,SignupRouter,ActivitySig
 
     private var keyboardListenersAttached = false
     private var isViewMoveUp = false
+
+    private val emailList = ArrayList<String>()
+    private var isListNotEmpty = false
+    private val arrayAdapter = ArrayAdapter<String>(this
+            ,R.layout.autocomplete_adapter_item
+            , emailList)
 
     override fun prodiveViewModel(): SignupViewModel {
         return ViewModelProviders.of(this).get(SignupViewModel::class.java)
@@ -39,21 +40,16 @@ class SignupActivity : BaseMvvmActivity<SignupViewModel,SignupRouter,ActivitySig
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        RxTextView.textChangeEvents(binding.etEmail)
+        arrayAdapter.setNotifyOnChange(true)
+
+       val disposable = RxTextView.textChangeEvents(binding.etEmail)
             .subscribeBy(
                 onNext = {
-                    val list = viewModel.updateArrayAdapter(it.text()
-                            .toString())
-
-                    if (!list.isEmpty()){
-                        val array = arrayOfNulls<String>(list.size)
-                        val validator = AutoCompleteEmailValidator(list.toArray(array))
-                        binding.etEmail.validator = validator
-                    }
-                    else binding.etEmail.validator = null
+                    val list = setAutocompleteList(it.text().toString())
+                    setAutocompleteValidator(list)
                 }
             )
-
+        addToDisposable(disposable)
         attachKeyboardListener()
     }
 
@@ -72,61 +68,87 @@ class SignupActivity : BaseMvvmActivity<SignupViewModel,SignupRouter,ActivitySig
         }
     }
 
-    private val keyboardListener = ViewTreeObserver.OnGlobalLayoutListener {
+    private fun setAutocompleteList(str: String): ArrayList<String> {
 
-        val r = Rect()
-        binding.rootLayout.getWindowVisibleDisplayFrame(r)
-        val screenHeight = binding.rootLayout.rootView.height
-        val keypadHeight = screenHeight - r.bottom
+        if (str.endsWith("@", true)) {
 
-        if(keypadHeight > screenHeight * 0.15){
-            onKeyboardShow()
-        }else onKeyboardHide()
+            val tempArr = str.split("@")
+            val emailPath = tempArr[0]
+            val emailArray = resources.getStringArray(R.array.email_list)
 
-    }
-
-    private fun onKeyboardShow(){
-        if (!isViewMoveUp){
-            binding.ivLogo.visibility = View.GONE
-
-            val animator = ValueAnimator.ofFloat(0f, -220f)
-            animator.duration = 750
-            animator.start()
-
-            animator.addUpdateListener { animation ->
-                val animatedValue = animation.animatedValue as Float
-                binding.tvEmail.translationY = animatedValue
-                binding.etEmail.translationY = animatedValue
-                binding.tvPassword.translationY = animatedValue
-                binding.textInputLayout.translationY = animatedValue
-                binding.btnRegistry.translationY = animatedValue
+            for (item in emailArray) {
+                emailList.add("$emailPath@$item")
             }
 
-            isViewMoveUp = true
+            arrayAdapter.clear()
+            arrayAdapter.addAll(emailList)
+            isListNotEmpty = true
+
+        } else if (isListNotEmpty && !str.contains("@")) {
+
+            emailList.clear()
+            arrayAdapter.clear()
+            isListNotEmpty = false
         }
+
+        return emailList
     }
 
-    private fun onKeyboardHide(){
-        if (isViewMoveUp){
+    private fun setAutocompleteValidator(list: ArrayList<String>){
+        if (!list.isEmpty()){
+            val array = arrayOfNulls<String>(list.size)
+            val validator = AutoCompleteEmailValidator(list.toArray(array))
+            binding.etEmail.validator = validator
+        }
+        else binding.etEmail.validator = null
+    }
 
-            val animator = ValueAnimator.ofFloat(-220f, 0f)
-            animator.duration = 750
-            animator.start()
+    private val keyboardListener = object : OpenKeyboardListener(binding.rootLayout){
 
-            animator.addUpdateListener { animation ->
-                val animatedValue = animation.animatedValue as Float
-                binding.tvEmail.translationY = animatedValue
-                binding.etEmail.translationY = animatedValue
-                binding.tvPassword.translationY = animatedValue
-                binding.textInputLayout.translationY = animatedValue
-                binding.btnRegistry.translationY = animatedValue
-                if(animatedValue > -2){
-                    binding.ivLogo.visibility = View.VISIBLE
+        override fun onKeyboardShow() {
+            if (!isViewMoveUp){
+                binding.ivLogo.visibility = View.GONE
+
+                val animator = ValueAnimator.ofFloat(0f, -220f)
+                animator.duration = 750
+                animator.start()
+
+                animator.addUpdateListener { animation ->
+                    val animatedValue = animation.animatedValue as Float
+                    binding.tvEmail.translationY = animatedValue
+                    binding.etEmail.translationY = animatedValue
+                    binding.tvPassword.translationY = animatedValue
+                    binding.textInputLayout.translationY = animatedValue
+                    binding.btnRegistry.translationY = animatedValue
                 }
-            }
 
-            isViewMoveUp = false
+                isViewMoveUp = true
+            }
         }
+
+        override fun onKeyboardHide() {
+            if (isViewMoveUp){
+
+                val animator = ValueAnimator.ofFloat(-220f, 0f)
+                animator.duration = 750
+                animator.start()
+
+                animator.addUpdateListener { animation ->
+                    val animatedValue = animation.animatedValue as Float
+                    binding.tvEmail.translationY = animatedValue
+                    binding.etEmail.translationY = animatedValue
+                    binding.tvPassword.translationY = animatedValue
+                    binding.textInputLayout.translationY = animatedValue
+                    binding.btnRegistry.translationY = animatedValue
+                    if(animatedValue > -2){
+                        binding.ivLogo.visibility = View.VISIBLE
+                    }
+                }
+
+                isViewMoveUp = false
+            }
+        }
+
     }
 
 }

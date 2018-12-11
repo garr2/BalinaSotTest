@@ -1,6 +1,5 @@
 package com.garr.pavelbobrovko.data.net
 
-import android.util.Log
 import com.garr.pavelbobrovko.data.entity.SignUpErrorResponse
 import com.garr.pavelbobrovko.domain.entity.AppErrorType
 import com.garr.pavelbobrovko.domain.entity.AppException
@@ -22,21 +21,20 @@ class SignUpErrorParser(private val gson: Gson) {
                             throw AppException(AppErrorType.UNKNOWN)
                         }
 
-                        var exception: AppException
-                        try {
-                            //здесь мы брасали AppException))
+                        val exception: AppException
+                        exception = try {
+
                             val errorObject = gson.fromJson<SignUpErrorResponse>(errorBody,
                                     SignUpErrorResponse::class.java)
 
                             when(errorObject.status){
                                 400 -> {
-                                    exception = AppException(AppErrorType.VALIDATION_ERROR, errorObject.valid)
+                                    AppException(AppErrorType.VALIDATION_ERROR, errorObject.valid)
                                 }
-                                else -> exception = AppException(AppErrorType.UNKNOWN)
+                                else -> AppException(AppErrorType.UNKNOWN)
                             }
                         }catch (e: Exception){
-                            // а здесь мы его перехватывали т.к. он наследуется от Exception)
-                           exception = AppException(AppErrorType.UNKNOWN)
+                            AppException(AppErrorType.UNKNOWN)
                         }
                         throw exception
                     }

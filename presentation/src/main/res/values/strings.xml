@@ -5,6 +5,11 @@
     <string name="enter_password">Введите пароль</string>
     <string name="email">Email</string>
     <string name="password">Пароль</string>
+    <string name="server_unavaliable">Server is not available</string>
+    <string name="uknown_err">Unknown error</string>
+    <string name="first_path_of_validation_err">errorType: Validation error. SubInfo:</string>
+    <string name="last_path_validation_err">field: %1$s, message: %2$s</string>
+    <string name="validation_error">Validation error</string>
 
     <array name="email_list">
         <item>gmail.com</item>

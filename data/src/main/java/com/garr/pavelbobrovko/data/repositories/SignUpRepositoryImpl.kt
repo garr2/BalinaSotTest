@@ -10,6 +10,9 @@ class SignUpRepositoryImpl(val apiSevice: SignUpRestService): SignUpRepository {
 
     override fun signUp(email: String, pass: String): Observable<SignUpData> {
         return apiSevice.signUp(email,pass)
+                .doOnNext {
+                    //here we can save token
+                }
                 .map {
                     it.toSignUpData()
                 }

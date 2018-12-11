@@ -1,5 +1,6 @@
 package com.garr.pavelbobrovko.balinasoftandroidtest.factory
 
+import com.garr.pavelbobrovko.balinasoftandroidtest.BuildConfig
 import com.garr.pavelbobrovko.balinasoftandroidtest.executor.UIThread
 import com.garr.pavelbobrovko.data.net.SignUpRestService
 import com.garr.pavelbobrovko.data.repositories.SignUpRepositoryImpl
@@ -9,7 +10,7 @@ object UseCaseProvider {
 
     private val uiThread = UIThread()
 
-    private const val signUpRestUrl = "http://junior.balinasoft.com/api/account/"
+    private val signUpRestUrl = BuildConfig.SIGNUP_API_URL
 
     fun provideSignUpUseCase(): SignUpUseCase{
         return SignUpUseCase(uiThread,SignUpRepositoryImpl(SignUpRestService(signUpRestUrl)))

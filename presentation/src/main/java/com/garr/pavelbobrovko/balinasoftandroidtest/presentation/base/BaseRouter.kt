@@ -3,6 +3,7 @@ package com.garr.pavelbobrovko.balinasoftandroidtest.presentation.base
 import android.support.v4.app.FragmentManager
 import android.util.Log
 import android.widget.Toast
+import com.garr.pavelbobrovko.balinasoftandroidtest.R
 import com.garr.pavelbobrovko.domain.entity.AppErrorType
 import com.garr.pavelbobrovko.domain.entity.AppException
 import io.reactivex.exceptions.CompositeException
@@ -14,27 +15,25 @@ abstract class BaseRouter<A : BaseActivity>(val activity: A) {
     }
 
     fun showError(e: Throwable) {
-        if (e is CompositeException){
-            Log.d("myLog", e.exceptions.toString())
-        }
-
         if(e is AppException) {
 
             val message: String
             when(e.errorType) {
                 AppErrorType.VALIDATION_ERROR -> {
                     if (e.subInfo!=null){
-                       message = "errorType: Validation error. SubInfo:\n"
+                       message = activity.getString(R.string.first_path_of_validation_err)
                         for (item in e.subInfo!!){
-                            message + "field: ${item.field}, message: ${item.message}\n"
+                            var subInfo = activity.getString(R.string.last_path_validation_err)
+                            subInfo = String.format(subInfo,item.field,item.message)
+                            message + "\n" + subInfo
                         }
-                    }else message = "Validation error"
+                    }else message = activity.getString(R.string.validation_error)
                 }
                 AppErrorType.SERVER_IS_NOT_AVAILABLE -> {
-                    message ="Server is not available"
+                    message =activity.getString(R.string.server_unavaliable)
                 }
                 else -> {
-                    message ="Unknown error"
+                    message =activity.getString(R.string.uknown_err)
                 }
             }
 
