@@ -5,6 +5,7 @@ import android.text.TextUtils
 import android.util.Patterns
 import com.garr.pavelbobrovko.balinasoftandroidtest.factory.UseCaseProvider
 import com.garr.pavelbobrovko.balinasoftandroidtest.presentation.base.BaseViewModel
+import com.garr.pavelbobrovko.domain.entity.RegistrationData
 import io.reactivex.rxkotlin.subscribeBy
 import java.lang.Exception
 
@@ -22,7 +23,8 @@ class SignupViewModel: BaseViewModel<SignupRouter>() {
     fun signUpClick(){
         val wrongEmail = checkEmail(email.get()?: "")
         if (wrongEmail && checkPass(pass.get()?:"")){
-           val disposable = signUpUseCase.signUp(email.get()!!,pass.get()!!)
+            val registrationData = RegistrationData(email.get()!!,pass.get()!!)
+           val disposable = signUpUseCase.signUp(registrationData)
                 .subscribeBy (
                     onNext = {
                        router?.showResult(it)

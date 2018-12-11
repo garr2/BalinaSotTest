@@ -1,6 +1,5 @@
 package com.garr.pavelbobrovko.balinasoftandroidtest.presentation.utils
 
-import android.databinding.ViewDataBinding
 import android.graphics.Rect
 import android.support.constraint.ConstraintLayout
 import android.view.ViewTreeObserver

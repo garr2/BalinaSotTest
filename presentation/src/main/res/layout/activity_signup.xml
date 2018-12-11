@@ -47,7 +47,6 @@
             android:hint="@string/enter_email"
             android:inputType="textEmailAddress|textAutoComplete|textAutoCorrect"
             android:text="@={view_model.email}"
-            app:adapter="@{view_model.adapter}"
             app:layout_constraintBottom_toTopOf="@+id/glCenterHorizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
