@@ -20,9 +20,8 @@ class SignupActivity : BaseMvvmActivity<SignupViewModel,SignupRouter,ActivitySig
 
     private val emailList = ArrayList<String>()
     private var isListNotEmpty = false
-    private val arrayAdapter = ArrayAdapter<String>(this
-            ,R.layout.autocomplete_adapter_item
-            , emailList)
+    private lateinit var arrayAdapter: ArrayAdapter<String>
+    private lateinit var keyboardListener: OpenKeyboardListener
 
     override fun prodiveViewModel(): SignupViewModel {
         return ViewModelProviders.of(this).get(SignupViewModel::class.java)
@@ -40,9 +39,13 @@ class SignupActivity : BaseMvvmActivity<SignupViewModel,SignupRouter,ActivitySig
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        arrayAdapter = ArrayAdapter<String>(this
+            ,R.layout.autocomplete_adapter_item
+            , emailList)
         arrayAdapter.setNotifyOnChange(true)
+        binding.etEmail.setAdapter(arrayAdapter)
 
-       val disposable = RxTextView.textChangeEvents(binding.etEmail)
+        val disposable = RxTextView.textChangeEvents(binding.etEmail)
             .subscribeBy(
                 onNext = {
                     val list = setAutocompleteList(it.text().toString())
@@ -50,6 +53,7 @@ class SignupActivity : BaseMvvmActivity<SignupViewModel,SignupRouter,ActivitySig
                 }
             )
         addToDisposable(disposable)
+        initKeyboardListener()
         attachKeyboardListener()
     }
 
@@ -103,52 +107,55 @@ class SignupActivity : BaseMvvmActivity<SignupViewModel,SignupRouter,ActivitySig
         else binding.etEmail.validator = null
     }
 
-    private val keyboardListener = object : OpenKeyboardListener(binding.rootLayout){
+    private fun initKeyboardListener(){
+        keyboardListener = object : OpenKeyboardListener(binding.rootLayout){
 
-        override fun onKeyboardShow() {
-            if (!isViewMoveUp){
-                binding.ivLogo.visibility = View.GONE
+            override fun onKeyboardShow() {
+                if (!isViewMoveUp){
+                    binding.ivLogo.visibility = View.GONE
 
-                val animator = ValueAnimator.ofFloat(0f, -220f)
-                animator.duration = 750
-                animator.start()
+                    val animator = ValueAnimator.ofFloat(0f, -220f)
+                    animator.duration = 750
+                    animator.start()
 
-                animator.addUpdateListener { animation ->
-                    val animatedValue = animation.animatedValue as Float
-                    binding.tvEmail.translationY = animatedValue
-                    binding.etEmail.translationY = animatedValue
-                    binding.tvPassword.translationY = animatedValue
-                    binding.textInputLayout.translationY = animatedValue
-                    binding.btnRegistry.translationY = animatedValue
-                }
-
-                isViewMoveUp = true
-            }
-        }
-
-        override fun onKeyboardHide() {
-            if (isViewMoveUp){
-
-                val animator = ValueAnimator.ofFloat(-220f, 0f)
-                animator.duration = 750
-                animator.start()
-
-                animator.addUpdateListener { animation ->
-                    val animatedValue = animation.animatedValue as Float
-                    binding.tvEmail.translationY = animatedValue
-                    binding.etEmail.translationY = animatedValue
-                    binding.tvPassword.translationY = animatedValue
-                    binding.textInputLayout.translationY = animatedValue
-                    binding.btnRegistry.translationY = animatedValue
-                    if(animatedValue > -2){
-                        binding.ivLogo.visibility = View.VISIBLE
+                    animator.addUpdateListener { animation ->
+                        val animatedValue = animation.animatedValue as Float
+                        binding.tvEmail.translationY = animatedValue
+                        binding.etEmail.translationY = animatedValue
+                        binding.tvPassword.translationY = animatedValue
+                        binding.textInputLayout.translationY = animatedValue
+                        binding.btnRegistry.translationY = animatedValue
                     }
+
+                    isViewMoveUp = true
                 }
-
-                isViewMoveUp = false
             }
-        }
 
+            override fun onKeyboardHide() {
+                if (isViewMoveUp){
+
+                    val animator = ValueAnimator.ofFloat(-220f, 0f)
+                    animator.duration = 750
+                    animator.start()
+
+                    animator.addUpdateListener { animation ->
+                        val animatedValue = animation.animatedValue as Float
+                        binding.tvEmail.translationY = animatedValue
+                        binding.etEmail.translationY = animatedValue
+                        binding.tvPassword.translationY = animatedValue
+                        binding.textInputLayout.translationY = animatedValue
+                        binding.btnRegistry.translationY = animatedValue
+                        if(animatedValue > -2){
+                            binding.ivLogo.visibility = View.VISIBLE
+                        }
+                    }
+
+                    isViewMoveUp = false
+                }
+            }
+
+        }
     }
+
 
 }
